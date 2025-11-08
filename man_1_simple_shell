@@ -1,60 +1,49 @@
-.TH SIMPLE_SHELL 1 "April 2025" "Version 1.1" "User Commands"
-
+.TH SIMPLE_SHELL 1 "April 2025" "Educational Project"
 .SH NAME
-simple_shell \- A simple Unix command-line interpreter.
-
+simple_shell \- UNIX command interpreter implementation
 .SH SYNOPSIS
 .B ./hsh
-
-.SH DESCRIPTION
+.SH OVERVIEW
 .B simple_shell
-is a Unix command-line interpreter designed to mimic the behavior of /bin/sh. It supports the execution of commands, both interactively and non-interactively, and includes built-in commands such as exit and env.
-
-.SH USAGE
-Interactive mode:
-.TP
-./hsh
-($) /bin/ls
-($) ls -l
-($) env
-($) exit
-
-Non-interactive mode:
-.TP
-echo "/bin/ls" | ./hsh
-
-.SH BUILT-IN COMMANDS
-The Simple Shell includes the following built-in commands:
+is an educational implementation of a UNIX shell designed to demonstrate process creation, command parsing, and environment management principles.
+.SH OPERATIONAL CHARACTERISTICS
+.SS Interactive Mode
+.RS
+.IP \(bu 3
+Displays prompt: ($)
+.IP \(bu 3
+Reads commands from standard input
+.IP \(bu 3
+Executes commands and displays results
+.RE
+.SS Non-interactive Mode
+.RS
+.IP \(bu 3
+Reads commands from standard input or files
+.IP \(bu 3
+Executes without user interaction
+.IP \(bu 3
+Suitable for scripting and automation
+.RE
+.SH BUILT-IN DIRECTIVES
 .TP
 .B exit
-Exits the shell immediately. Does not accept any arguments.
-
+Terminates shell execution
 .TP
 .B env
-Displays the current environment variables.
-
-.SH OPTIONS
-The Simple Shell does not currently support any command-line options.
-
-.SH ENVIRONMENT VARIABLES
-The Simple Shell uses the following environment variables:
-.TP
-.B PATH
-Specifies the directories to search for executable commands. If PATH is not set, only absolute or relative paths can be executed.
-
-.TP
-.B PATH1
-An alternative to PATH, used when PATH is unset.
-
-.SH SCRIPT SUPPORT
-The Simple Shell can execute scripts such as the hbtn_ls script:
+Outputs environment variable definitions
+.SH PATH RESOLUTION
+Utilizes PATH environment variable for command location. Supports both absolute and relative path specifications.
+.SH CUSTOM SCRIPTS
+Compatible with executable scripts including demonstration script:
 .TP
 .B /home/student_jail/student_repo/hbtn_ls
-This is a custom script that runs the ls command.
-
-.SH AUTHORS
-.B Razan Alabdulhadi
-<razan_8801@icloud.com>
-.TP
-.B Layan
-<layanAzez@gmail.com>
+.SH DEVELOPMENT
+.RS
+.IP \(bu 3
+Layan Aldossari <layansaleem@gmail.com>
+.IP \(bu 3
+Afnan Alkhaldi <afnanrashid@gmail.com>
+.RE
+.SH STANDARDS
+Implements subset of POSIX shell specification.
