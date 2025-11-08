@@ -1,49 +1,52 @@
-.TH SIMPLE_SHELL 1 "April 2025" "Educational Project"
-.SH NAME
-simple_shell \- UNIX command interpreter implementation
-.SH SYNOPSIS
-.B ./hsh
-.SH OVERVIEW
-.B simple_shell
-is an educational implementation of a UNIX shell designed to demonstrate process creation, command parsing, and environment management principles.
-.SH OPERATIONAL CHARACTERISTICS
-.SS Interactive Mode
-.RS
-.IP \(bu 3
-Displays prompt: ($)
-.IP \(bu 3
-Reads commands from standard input
-.IP \(bu 3
-Executes commands and displays results
-.RE
-.SS Non-interactive Mode
-.RS
-.IP \(bu 3
-Reads commands from standard input or files
-.IP \(bu 3
-Executes without user interaction
-.IP \(bu 3
-Suitable for scripting and automation
-.RE
-.SH BUILT-IN DIRECTIVES
-.TP
-.B exit
-Terminates shell execution
-.TP
-.B env
-Outputs environment variable definitions
-.SH PATH RESOLUTION
-Utilizes PATH environment variable for command location. Supports both absolute and relative path specifications.
-.SH CUSTOM SCRIPTS
-Compatible with executable scripts including demonstration script:
-.TP
-.B /home/student_jail/student_repo/hbtn_ls
-.SH DEVELOPMENT
-.RS
-.IP \(bu 3
-Layan Aldossari <layansaleem@gmail.com>
-.IP \(bu 3
-Afnan Alkhaldi <afnanrashid@gmail.com>
-.RE
-.SH STANDARDS
-Implements subset of POSIX shell specification.
+#include "shell.h"
+
+int main(void)
+{
+    char *line = NULL, **args;
+    size_t len = 0;
+    ssize_t nread;
+    pid_t pid;
+    int status;
+
+    while (1)
+    {
+        write(STDOUT_FILENO, "$ ", 2);
+        nread = getline(&line, &len, stdin);
+        if (nread == -1)
+        {
+            free(line);
+            exit(0);
+        }
+
+        args = tokenize(line);
+        if (!args || !args[0])
+        {
+            free_args(args);
+            continue;
+        }
+
+        if (_strcmp(args[0], "env") == 0)
+        {
+            _print_env();
+            free_args(args);
+            continue;
+        }
+
+        pid = fork();
+        if (pid == 0)
+        {
+            if (execve(args[0], args, environ) == -1)
+                perror("Error");
+            exit(EXIT_FAILURE);
+        }
+        else
+        {
+            wait(&status);
+        }
+
+        free_args(args);
+    }
+
+    free(line);
+    return 0;
+}
