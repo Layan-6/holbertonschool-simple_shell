@@ -1,12 +1,33 @@
-#include "shell.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/wait.h>
+
+extern char **environ;
+
+int _strcmp(const char *s1, const char *s2)
+{
+    while (*s1 && *s2 && *s1 == *s2)
+        s1++, s2++;
+    return (*s1 - *s2);
+}
+
+int _strlen(const char *s)
+{
+    int len = 0;
+    while (s[len])
+        len++;
+    return len;
+}
 
 int main(void)
 {
-    char *line = NULL, **args;
+    char *line = NULL, *token, **args;
     size_t len = 0;
     ssize_t nread;
+    int i, status;
     pid_t pid;
-    int status;
 
     while (1)
     {
@@ -18,17 +39,35 @@ int main(void)
             exit(0);
         }
 
-        args = tokenize(line);
-        if (!args || !args[0])
+        args = malloc(sizeof(char *) * 64);
+        if (!args)
+            continue;
+
+        token = strtok(line, " \t\n");
+        i = 0;
+        while (token)
         {
-            free_args(args);
+            args[i++] = strdup(token);
+            token = strtok(NULL, " \t\n");
+        }
+        args[i] = NULL;
+
+        if (args[0] == NULL)
+        {
+            free(args);
             continue;
         }
 
         if (_strcmp(args[0], "env") == 0)
         {
-            _print_env();
-            free_args(args);
+            for (i = 0; environ && environ[i]; i++)
+            {
+                write(STDOUT_FILENO, environ[i], _strlen(environ[i]));
+                write(STDOUT_FILENO, "\n", 1);
+            }
+            for (i = 0; args[i]; i++)
+                free(args[i]);
+            free(args);
             continue;
         }
 
@@ -44,7 +83,9 @@ int main(void)
             wait(&status);
         }
 
-        free_args(args);
+        for (i = 0; args[i]; i++)
+            free(args[i]);
+        free(args);
     }
 
     free(line);
