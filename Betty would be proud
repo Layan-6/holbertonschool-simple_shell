@@ -1,33 +1,18 @@
 #include <stdio.h>
 
 /**
- * _strlen - Calculates the length of a string
- * @s: Pointer to the string
+ * print_env - Prints the current environment variables
  *
- * Return: Length of the string
+ * Return: void
  */
-int _strlen(char *s)
+void print_env(void)
 {
-    int len = 0;
+    extern char **environ;
+    int i = 0;
 
-    while (s[len] != '\0')
-        len++;
-
-    return (len);
-}
-
-/**
- * main - Entry point to test the _strlen function
- *
- * Return: Always 0 (Success)
- */
-int main(void)
-{
-    char str[] = "Betty style is beautiful!";
-    int length;
-
-    length = _strlen(str);
-    printf("Length of \"%s\" is %d\n", str, length);
-
-    return (0);
+    while (environ[i] != NULL)
+    {
+        printf("%s\n", environ[i]);
+        i++;
+    }
 }
