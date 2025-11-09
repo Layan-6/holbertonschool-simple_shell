@@ -1,51 +1,50 @@
 #include "shell.h"
 
 /**
- * execute_args - Executes command with arguments
- * @args: Array of arguments
- * @env: Environment variables
- *
- * Return: 1 to continue, 0 to exit
+ * execute_command - Executes a single command
+ * @command: Command to execute
  */
-int execute_args(char **args, char **env)
+void execute_command(char *command)
 {
-    pid_t pid;
-    int status;
-    struct stat st;
+	pid_t pid;
+	int status;
+	struct stat st;
 
-    /* Check for built-in commands */
-    if (check_builtins(args, env) == 0)
-        return (1);
+	/* Check if file exists and is executable */
+	if (stat(command, &st) == -1)
+	{
+		fprintf(stderr, "./hsh: 1: %s: not found\n", command);
+		return;
+	}
 
-    /* Check if command exists */
-    if (stat(args[0], &st) == -1)
-    {
-        fprintf(stderr, "./hsh: 1: %s: not found\n", args[0]);
-        return (1);
-    }
+	/* Check if it's executable */
+	if (access(command, X_OK) == -1)
+	{
+		fprintf(stderr, "./hsh: 1: %s: not found\n", command);
+		return;
+	}
 
-    pid = fork();
-    if (pid == 0)
-    {
-        /* Child process */
-        if (execve(args[0], args, env) == -1)
-        {
-            perror("./hsh");
-            exit(EXIT_FAILURE);
-        }
-    }
-    else if (pid < 0)
-    {
-        /* Fork failed */
-        perror("./hsh");
-    }
-    else
-    {
-        /* Parent process */
-        do {
-            waitpid(pid, &status, WUNTRACED);
-        } while (!WIFEXITED(status) && !WIFSIGNALED(status));
-    }
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("fork");
+		return;
+	}
 
-    return (1);
+	if (pid == 0)
+	{
+		/* Child process */
+		char *args[] = {command, NULL};
+		
+		if (execve(command, args, environ) == -1)
+		{
+			perror("./hsh");
+			exit(EXIT_FAILURE);
+		}
+	}
+	else
+	{
+		/* Parent process */
+		wait(&status);
+	}
 }
