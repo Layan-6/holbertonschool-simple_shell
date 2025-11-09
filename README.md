@@ -14,4 +14,4 @@ This project implements a basic UNIX shell that can read commands, execute progr
 
 ## Compilation
 ```bash
-gcc -Wall -Werror -Wextra -pedantic -std=gnu89 simple_shell.c -o hsh
+gcc -Wall -Werror -Wextra -pedantic -std=gnu89 shell.c -o hsh
