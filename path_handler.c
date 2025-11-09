@@ -9,7 +9,6 @@ char *find_command_path(char *command)
     char *path = getenv("PATH");
     char *token, *full_path;
     size_t len;
-
     if (!path)
         return (NULL);
 
