@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "shell.h"
-
 void print_env(void)
 {
     int i = 0;
