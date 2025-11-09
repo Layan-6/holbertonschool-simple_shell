@@ -1,50 +1,52 @@
 #include "shell.h"
 
 /**
- * execute_command - Executes a single command
- * @command: Command to execute
+ * execute_args - Executes command with arguments
+ * @args: Command arguments
+ * @env: Environment variables
+ * Return: 1 to continue, 0 to exit
  */
-void execute_command(char *command)
+int execute_args(char **args, char **env)
 {
-	pid_t pid;
-	int status;
-	struct stat st;
+    pid_t pid;
+    int status;
+    char *command_path;
 
-	/* Check if file exists and is executable */
-	if (stat(command, &st) == -1)
-	{
-		fprintf(stderr, "./hsh: 1: %s: not found\n", command);
-		return;
-	}
+    /* Check for built-in commands */
+    if (check_builtins(args, env) == 1)
+        return (1);
 
-	/* Check if it's executable */
-	if (access(command, X_OK) == -1)
-	{
-		fprintf(stderr, "./hsh: 1: %s: not found\n", command);
-		return;
-	}
+    /* Find command path */
+    command_path = find_command_path(args[0]);
+    if (!command_path)
+    {
+        fprintf(stderr, "./hsh: 1: %s: not found\n", args[0]);
+        return (1);
+    }
 
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("fork");
-		return;
-	}
+    pid = fork();
+    if (pid == 0)
+    {
+        /* Child process */
+        if (execve(command_path, args, env) == -1)
+        {
+            perror("./hsh");
+            free(command_path);
+            exit(EXIT_FAILURE);
+        }
+    }
+    else if (pid < 0)
+    {
+        /* Fork failed */
+        perror("./hsh");
+        free(command_path);
+    }
+    else
+    {
+        /* Parent process */
+        wait(&status);
+        free(command_path);
+    }
 
-	if (pid == 0)
-	{
-		/* Child process */
-		char *args[] = {command, NULL};
-		
-		if (execve(command, args, environ) == -1)
-		{
-			perror("./hsh");
-			exit(EXIT_FAILURE);
-		}
-	}
-	else
-	{
-		/* Parent process */
-		wait(&status);
-	}
+    return (1);
 }
