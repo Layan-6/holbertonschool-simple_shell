@@ -1,36 +1,33 @@
 #include <stdio.h>
 
 /**
- * factorial - Calculates the factorial of a non-negative integer
- * @n: The integer whose factorial is to be calculated
+ * _strlen - Calculates the length of a string
+ * @s: Pointer to the string
  *
- * Return: The factorial of n. Returns 1 if n is 0.
+ * Return: Length of the string
  */
-int factorial(int n)
+int _strlen(char *s)
 {
-    if (n < 0)
-    {
-        printf("Error: Negative input not allowed\n");
-        return (-1);
-    }
-    if (n == 0)
-        return (1);
-    return (n * factorial(n - 1));
+    int len = 0;
+
+    while (s[len] != '\0')
+        len++;
+
+    return (len);
 }
 
 /**
- * main - Entry point to test the factorial function
+ * main - Entry point to test the _strlen function
  *
  * Return: Always 0 (Success)
  */
 int main(void)
 {
-    int num = 5;
-    int result;
+    char str[] = "Betty style is beautiful!";
+    int length;
 
-    result = factorial(num);
-    if (result != -1)
-        printf("Factorial of %d is %d\n", num, result);
+    length = _strlen(str);
+    printf("Length of \"%s\" is %d\n", str, length);
 
     return (0);
 }
