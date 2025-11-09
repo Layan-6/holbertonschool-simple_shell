@@ -51,8 +51,11 @@ int main(void)
         pid = fork();
         if (pid == 0)
         {
-            /* Child process */
-            char *args[] = {line, NULL};
+            /* Child process - إصلاح المشكلة هنا */
+            char *args[2];
+            args[0] = line;
+            args[1] = NULL;
+            
             execve(line, args, environ);
             perror("./hsh");
             exit(EXIT_FAILURE);
