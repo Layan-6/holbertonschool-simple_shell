@@ -1,26 +1,17 @@
 #include "shell.h"
 
 /**
- * main - Entry point for simple shell
- * Return: Always 0
+ * main - Entry point
+ * @argc: Argument count
+ * @argv: Argument vector
+ * @env: Environment variables
+ * Return: 0 on success
  */
-int main(void)
+int main(int argc, char **argv, char **env)
 {
-	char *command;
+    (void)argc;
+    (void)argv;
 
-	while (1)
-	{
-		display_prompt();
-		command = read_input();
-		
-		if (command == NULL)
-			break;
-
-		if (strlen(command) > 0)
-			execute_command(command);
-
-		free(command);
-	}
-
-	return (0);
+    shell_loop(env);
+    return (0);
 }
