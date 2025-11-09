@@ -5,7 +5,6 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 
-extern char **environ;
 
 /**
  * main - Simple shell for task 0.1
