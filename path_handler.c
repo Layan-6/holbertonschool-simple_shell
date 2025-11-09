@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
+#include "shell.h"
 
 char *find_command_path(char *command)
 {
@@ -19,7 +20,10 @@ char *find_command_path(char *command)
         len = strlen(token) + strlen(command) + 2;
         full_path = malloc(len);
         if (!full_path)
+        {
+            free(path);
             return (NULL);
+        }
 
         snprintf(full_path, len, "%s/%s", token, command);
         if (access(full_path, X_OK) == 0)
