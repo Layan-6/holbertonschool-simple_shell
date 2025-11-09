@@ -3,21 +3,18 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
-#include <sys/types.h>
+#include <string.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
 
-/* Function prototypes */
-void shell_loop(char **env);
-char *read_line(void);
-char **parse_line(char *line);
-int execute_args(char **args, char **env);
-int check_builtins(char **args, char **env);
+#define MAX_INPUT 1024
 
-/* Built-in functions */
-void exit_shell(char **args);
-void print_env(char **env);
+extern char **environ;
+
+/* Function prototypes */
+void display_prompt(void);
+char *read_input(void);
+void execute_command(char *command);
 
 #endif /* SHELL_H */
