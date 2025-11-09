@@ -8,7 +8,7 @@
  */
 int check_builtins(char **args, char **env)
 {
-    (void)env; /* إذا لم تستخدم env */
+    (void)env; 
 
     if (strcmp(args[0], "exit") == 0)
     {
