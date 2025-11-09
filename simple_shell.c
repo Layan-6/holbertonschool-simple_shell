@@ -41,8 +41,14 @@ int main(void)
         if (strlen(line) == 0)
             continue;
 
-        /* Check if command exists */
-        if (stat(line, &st) == -1 || access(line, X_OK) == -1)
+        /* Check if command exists and is executable */
+        if (stat(line, &st) == -1)
+        {
+            fprintf(stderr, "./hsh: 1: %s: not found\n", line);
+            continue;
+        }
+
+        if (access(line, X_OK) == -1)
         {
             fprintf(stderr, "./hsh: 1: %s: not found\n", line);
             continue;
@@ -51,14 +57,16 @@ int main(void)
         pid = fork();
         if (pid == 0)
         {
-            /* Child process - إصلاح المشكلة هنا */
+            /* Child process */
             char *args[2];
             args[0] = line;
             args[1] = NULL;
             
-            execve(line, args, environ);
-            perror("./hsh");
-            exit(EXIT_FAILURE);
+            if (execve(line, args, environ) == -1)
+            {
+                perror("./hsh");
+                exit(EXIT_FAILURE);
+            }
         }
         else if (pid > 0)
         {
