@@ -2,17 +2,25 @@
 
 /**
  * main - Entry point for simple shell
- * @argc: Argument count
- * @argv: Argument vector
- * @env: Environment variables
- *
- * Return: 0 on success
+ * Return: Always 0
  */
-int main(int argc, char **argv, char **env)
+int main(void)
 {
-    (void)argc;
-    (void)argv;
+	char *command;
 
-    shell_loop(env);
-    return (0);
+	while (1)
+	{
+		display_prompt();
+		command = read_input();
+		
+		if (command == NULL)
+			break;
+
+		if (strlen(command) > 0)
+			execute_command(command);
+
+		free(command);
+	}
+
+	return (0);
 }
