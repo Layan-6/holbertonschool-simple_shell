@@ -2,13 +2,14 @@
 
 /**
  * check_builtins - Checks for built-in commands
- * @args: Array of arguments
+ * @args: Command arguments
  * @env: Environment variables
- *
- * Return: 1 if built-in found, 0 otherwise
+ * Return: 1 if builtin handled, 0 otherwise
  */
 int check_builtins(char **args, char **env)
 {
+    (void)env; /* إذا لم تستخدم env */
+
     if (strcmp(args[0], "exit") == 0)
     {
         exit_shell(args);
@@ -25,11 +26,11 @@ int check_builtins(char **args, char **env)
 
 /**
  * exit_shell - Exits the shell
- * @args: Array of arguments
+ * @args: Command arguments
  */
 void exit_shell(char **args)
 {
-    (void)args;
+    (void)args; /* إذا لم تستخدم args */
     exit(EXIT_SUCCESS);
 }
 
