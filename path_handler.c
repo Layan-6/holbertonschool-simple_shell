@@ -1,14 +1,9 @@
+cat << 'EOF' > path_handler.c
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
 
-/**
- * find_command_path - Searches for command in PATH
- * @command: The command to search for
- *
- * Return: Full path if found, NULL otherwise
- */
 char *find_command_path(char *command)
 {
     char *path = getenv("PATH");
@@ -18,6 +13,7 @@ char *find_command_path(char *command)
     if (!path)
         return (NULL);
 
+    path = strdup(path);
     token = strtok(path, ":");
     while (token)
     {
@@ -28,10 +24,15 @@ char *find_command_path(char *command)
 
         snprintf(full_path, len, "%s/%s", token, command);
         if (access(full_path, X_OK) == 0)
+        {
+            free(path);
             return (full_path);
+        }
 
         free(full_path);
         token = strtok(NULL, ":");
     }
+    free(path);
     return (NULL);
 }
+EOF
