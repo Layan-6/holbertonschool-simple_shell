@@ -34,4 +34,3 @@ char *find_command_path(char *command)
     free(path);
     return (NULL);
 }
-EOF
