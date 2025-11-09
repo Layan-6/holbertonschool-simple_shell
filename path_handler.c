@@ -36,4 +36,5 @@ char *find_command_path(char *command)
         token = strtok(NULL, ":");
     }
     free(path);
-    return (NULL);}
+    return (NULL);
+}
