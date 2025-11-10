@@ -1,7 +1,17 @@
 #ifndef SHELL_H
 #define SHELL_H
 
-void print_env(void);
-void execute_command(char *line);
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
-#endif
+void loop_shell(void);
+char *read_line(void);
+char **split_line(char *line);
+int launch(char **args);
+int execute(char **args);
+
+#endif /* SHELL_H */
