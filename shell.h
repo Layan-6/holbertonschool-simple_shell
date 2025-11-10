@@ -1,9 +1,7 @@
 #ifndef SHELL_H
 #define SHELL_H
 
-extern char **environ;
-
 void print_env(void);
-char *find_command_path(char *command);
+void execute_command(char *line);
 
-#endif /* SHELL_H */
+#endif
