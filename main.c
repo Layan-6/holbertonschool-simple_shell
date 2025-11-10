@@ -1,11 +1,17 @@
 #include "shell.h"
 
-/**
- * main - entry point for the simple shell
- * Return: 0 on success, or exit on failure
- */
 int main(void)
 {
-    loop_shell();
-    return (0);
+    char command[1024];
+
+    while (1)
+    {
+        printf("$ ");
+        if (fgets(command, sizeof(command), stdin) == NULL)
+            break;
+
+        execute_command(command);
+    }
+
+    return 0;
 }
