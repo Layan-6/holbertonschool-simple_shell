@@ -1,17 +1,11 @@
 #include "shell.h"
 
 /**
- * main - Entry point
- * @argc: Argument count
- * @argv: Argument vector
- * @env: Environment variables
- * Return: 0 on success
+ * main - entry point for the simple shell
+ * Return: 0 on success, or exit on failure
  */
-int main(int argc, char **argv, char **env)
+int main(void)
 {
-    (void)argc;
-    (void)argv;
-
-    shell_loop(env);
+    loop_shell();
     return (0);
 }
