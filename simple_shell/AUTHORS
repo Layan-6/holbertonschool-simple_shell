@@ -1,6 +1,6 @@
 cat > AUTHORS << 'EOF'
 # This file lists all individuals having contributed content to the repository.
 
-John Doe <john@holbertonschool.com>
-Jane Smith <jane@holbertonschool.com>
+Layan Aldossari <layansaleem@holbertonschool.com>
+Afnan Alkhaldi <afnan@holbertonschool.com>
 EOF
