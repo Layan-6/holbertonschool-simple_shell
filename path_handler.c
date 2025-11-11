@@ -1,4 +1,6 @@
 #include "shell.h"
+#include <sys/stat.h>
+#include <stdlib.h>
 
 /**
  * get_path - Finds the full path of a command
@@ -15,7 +17,9 @@ char *get_path(char *cmd)
     if (!path)
         return (NULL);
 
+    path = strdup(path);
     token = strtok(path, ":");
+
     while (token)
     {
         full_path = malloc(_strlen(token) + _strlen(cmd) + 2);
@@ -27,10 +31,15 @@ char *get_path(char *cmd)
         _strcat(full_path, cmd);
 
         if (stat(full_path, &st) == 0)
+        {
+            free(path);
             return (full_path);
+        }
 
         free(full_path);
         token = strtok(NULL, ":");
     }
+
+    free(path);
     return (NULL);
 }
