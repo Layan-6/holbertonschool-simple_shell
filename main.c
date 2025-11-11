@@ -2,17 +2,16 @@
 
 /**
  * main - Entry point of the shell
- * @ac: Argument count
- * @av: Argument vector
+ * @ac: Argument count (unused)
+ * @av: Argument vector (used to name the shell)
  * @env: Environment variables
  *
- * Return: Always 0
+ * Return: Always 0 on success
  */
 int main(int ac, char **av, char **env)
 {
     (void)ac;
-    (void)av;
 
-    shell_loop(env);
+    shell_loop(av, env);
     return (0);
 }
