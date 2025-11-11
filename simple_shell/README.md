@@ -1,3 +1,4 @@
+cat > README.md << 'EOF'
 # Simple Shell
 
 A simple UNIX command interpreter written as part of the Holberton School curriculum.
