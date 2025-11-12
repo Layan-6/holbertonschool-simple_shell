@@ -10,8 +10,9 @@ int main(void)
 	char *input;
 	int interactive = isatty(STDIN_FILENO);
 	int status = 0;
+	int exit_shell = 0;
 
-	while (1)
+	while (!exit_shell)
 	{
 		if (interactive)
 			display_prompt();
@@ -27,7 +28,7 @@ int main(void)
 
 		if (strlen(input) > 0)
 		{
-			status = execute_command(input);
+			status = execute_command(input, &exit_shell);
 		}
 
 		free(input);
@@ -201,12 +202,30 @@ char *find_command_in_path(char *command)
 }
 
 /**
+ * check_builtin - Checks if command is a built-in
+ * @args: Array of arguments
+ * @exit_shell: Pointer to exit flag
+ *
+ * Return: 1 if built-in executed, 0 otherwise
+ */
+int check_builtin(char **args, int *exit_shell)
+{
+	if (strcmp(args[0], "exit") == 0)
+	{
+		*exit_shell = 1;
+		return (1);
+	}
+	return (0);
+}
+
+/**
  * execute_command - Executes a command using execve
  * @input: The input string
+ * @exit_shell: Pointer to exit flag
  *
  * Return: 127 if command not found, 0 on success, 1 on error
  */
-int execute_command(char *input)
+int execute_command(char *input, int *exit_shell)
 {
 	pid_t pid;
 	int status, arg_count;
@@ -222,6 +241,13 @@ int execute_command(char *input)
 	if (!args || !args[0])
 	{
 		if (args) free(args);
+		return (0);
+	}
+
+	/* Check for built-in commands */
+	if (check_builtin(args, exit_shell))
+	{
+		free(args);
 		return (0);
 	}
 
