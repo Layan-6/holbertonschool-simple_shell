@@ -14,6 +14,8 @@ extern char **environ;
 /* Function prototypes */
 void display_prompt(void);
 char *read_input(void);
-int execute_command(char *command);
+char *trim_whitespace(char *str);
+char **parse_input(char *input, int *arg_count);
+int execute_command(char *input);
 
 #endif

@@ -63,7 +63,6 @@ char *read_input(void)
 		return (NULL);
 	}
 
-	/* Remove newline character */
 	if (line[nread - 1] == '\n')
 		line[nread - 1] = '\0';
 
@@ -80,68 +79,94 @@ char *trim_whitespace(char *str)
 {
 	char *end;
 
-	/* Trim leading space */
 	while (*str == ' ' || *str == '\t' || *str == '\n')
 		str++;
 
 	if (*str == 0)
 		return (str);
 
-	/* Trim trailing space */
 	end = str + strlen(str) - 1;
 	while (end > str && (*end == ' ' || *end == '\t' || *end == '\n'))
 		end--;
 
-	/* Write new null terminator */
 	*(end + 1) = '\0';
 
 	return (str);
 }
 
 /**
+ * parse_input - Splits input into command and arguments
+ * @input: The input string
+ * @arg_count: Pointer to store number of arguments
+ *
+ * Return: Array of arguments
+ */
+char **parse_input(char *input, int *arg_count)
+{
+	char **args = malloc(64 * sizeof(char *));
+	char *token;
+	int i = 0;
+
+	if (!args)
+		return (NULL);
+
+	token = strtok(input, " ");
+	while (token != NULL && i < 63)
+	{
+		args[i] = token;
+		i++;
+		token = strtok(NULL, " ");
+	}
+	args[i] = NULL;
+	*arg_count = i;
+
+	return (args);
+}
+
+/**
  * execute_command - Executes a command using execve
- * @command: The command to execute
+ * @input: The input string
  *
  * Return: 1 on success, 0 on failure
  */
-int execute_command(char *command)
+int execute_command(char *input)
 {
 	pid_t pid;
-	int status;
-	char *args[2];
-	char *trimmed_cmd;
+	int status, arg_count;
+	char **args;
+	char *trimmed_input;
 
-	/* Trim whitespace from command */
-	trimmed_cmd = trim_whitespace(command);
+	trimmed_input = trim_whitespace(input);
 
-	/* Skip empty commands after trimming */
-	if (strlen(trimmed_cmd) == 0)
+	if (strlen(trimmed_input) == 0)
 		return (1);
 
-	args[0] = trimmed_cmd;
-	args[1] = NULL;
+	args = parse_input(trimmed_input, &arg_count);
+	if (!args)
+		return (0);
 
 	pid = fork();
 	if (pid == -1)
 	{
 		perror("Error");
+		free(args);
 		return (0);
 	}
 
 	if (pid == 0)
 	{
-		/* Child process */
-		if (execve(trimmed_cmd, args, environ) == -1)
+		if (execve(args[0], args, environ) == -1)
 		{
 			printf("./shell: No such file or directory\n");
+			free(args);
 			exit(EXIT_FAILURE);
 		}
 	}
 	else
 	{
-		/* Parent process */
 		wait(&status);
 	}
 
+	free(args);
 	return (1);
 }
