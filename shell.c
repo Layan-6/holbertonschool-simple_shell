@@ -9,7 +9,6 @@ int main(void)
 {
 	char *input;
 	int interactive = isatty(STDIN_FILENO);
-	int status = 0;
 	int exit_shell = 0;
 	int last_status = 0;
 
