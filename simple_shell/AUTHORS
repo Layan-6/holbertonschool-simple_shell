@@ -1,6 +1,0 @@
-cat > AUTHORS << 'EOF'
-# This file lists all individuals having contributed content to the repository.
-
-Layan Aldossari <layansaleem@holbertonschool.com>
-Afnan Alkhaldi <afnan@holbertonschool.com>
-EOF
