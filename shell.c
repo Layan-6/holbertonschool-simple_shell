@@ -14,7 +14,7 @@ int main(void)
 	{
 		if (interactive)
 			display_prompt();
-		
+
 		input = read_input();
 
 		if (input == NULL)
@@ -71,6 +71,34 @@ char *read_input(void)
 }
 
 /**
+ * trim_whitespace - Removes leading and trailing whitespace
+ * @str: String to trim
+ *
+ * Return: Pointer to trimmed string
+ */
+char *trim_whitespace(char *str)
+{
+	char *end;
+
+	/* Trim leading space */
+	while (*str == ' ' || *str == '\t' || *str == '\n')
+		str++;
+
+	if (*str == 0)
+		return (str);
+
+	/* Trim trailing space */
+	end = str + strlen(str) - 1;
+	while (end > str && (*end == ' ' || *end == '\t' || *end == '\n'))
+		end--;
+
+	/* Write new null terminator */
+	*(end + 1) = '\0';
+
+	return (str);
+}
+
+/**
  * execute_command - Executes a command using execve
  * @command: The command to execute
  *
@@ -81,8 +109,16 @@ int execute_command(char *command)
 	pid_t pid;
 	int status;
 	char *args[2];
+	char *trimmed_cmd;
 
-	args[0] = command;
+	/* Trim whitespace from command */
+	trimmed_cmd = trim_whitespace(command);
+
+	/* Skip empty commands after trimming */
+	if (strlen(trimmed_cmd) == 0)
+		return (1);
+
+	args[0] = trimmed_cmd;
 	args[1] = NULL;
 
 	pid = fork();
@@ -95,7 +131,7 @@ int execute_command(char *command)
 	if (pid == 0)
 	{
 		/* Child process */
-		if (execve(command, args, environ) == -1)
+		if (execve(trimmed_cmd, args, environ) == -1)
 		{
 			printf("./shell: No such file or directory\n");
 			exit(EXIT_FAILURE);
