@@ -3,7 +3,7 @@
 /**
  * main - Entry point for simple shell
  *
- * Return: Always 0
+ * Return: Exit status of last command
  */
 int main(void)
 {
@@ -29,6 +29,10 @@ int main(void)
 		if (strlen(input) > 0)
 		{
 			last_status = execute_command(input, &exit_shell);
+		}
+		else
+		{
+			last_status = 0;
 		}
 
 		free(input);
@@ -205,10 +209,11 @@ char *find_command_in_path(char *command)
  * check_builtin - Checks if command is a built-in
  * @args: Array of arguments
  * @exit_shell: Pointer to exit flag
+ * @last_status: Last exit status
  *
  * Return: 1 if built-in executed, 0 otherwise
  */
-int check_builtin(char **args, int *exit_shell)
+int check_builtin(char **args, int *exit_shell, int last_status)
 {
 	if (strcmp(args[0], "exit") == 0)
 	{
@@ -231,24 +236,25 @@ int execute_command(char *input, int *exit_shell)
 	int status, arg_count;
 	char **args;
 	char *trimmed_input, *command_path;
+	static int last_status = 0;
 
 	trimmed_input = trim_whitespace(input);
 
 	if (strlen(trimmed_input) == 0)
-		return (0);
+		return (last_status);
 
 	args = parse_input(trimmed_input, &arg_count);
 	if (!args || !args[0])
 	{
 		if (args) free(args);
-		return (0);
+		return (last_status);
 	}
 
 	/* Check for built-in commands */
-	if (check_builtin(args, exit_shell))
+	if (check_builtin(args, exit_shell, last_status))
 	{
 		free(args);
-		return (0);
+		return (last_status);
 	}
 
 	/* Find command in PATH */
@@ -257,6 +263,7 @@ int execute_command(char *input, int *exit_shell)
 	{
 		fprintf(stderr, "./hsh: 1: %s: not found\n", args[0]);
 		free(args);
+		last_status = 127;
 		return (127);
 	}
 
@@ -266,6 +273,7 @@ int execute_command(char *input, int *exit_shell)
 		perror("Error");
 		free(command_path);
 		free(args);
+		last_status = 1;
 		return (1);
 	}
 
@@ -283,12 +291,12 @@ int execute_command(char *input, int *exit_shell)
 	{
 		wait(&status);
 		if (WIFEXITED(status))
-			status = WEXITSTATUS(status);
+			last_status = WEXITSTATUS(status);
 		else
-			status = 0;
+			last_status = 0;
 	}
 
 	free(command_path);
 	free(args);
-	return (status);
+	return (last_status);
 }
