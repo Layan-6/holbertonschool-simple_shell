@@ -8,15 +8,19 @@
 int main(void)
 {
 	char *input;
+	int interactive = isatty(STDIN_FILENO);
 
 	while (1)
 	{
-		display_prompt();
+		if (interactive)
+			display_prompt();
+		
 		input = read_input();
 
 		if (input == NULL)
 		{
-			printf("\n");
+			if (interactive)
+				printf("\n");
 			break;
 		}
 
