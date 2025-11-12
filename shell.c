@@ -40,7 +40,7 @@ int main(void)
  */
 void display_prompt(void)
 {
-	printf("#cisfun$ ");
+	printf(":) ");
 	fflush(stdout);
 }
 
@@ -124,6 +124,58 @@ char **parse_input(char *input, int *arg_count)
 }
 
 /**
+ * find_command_in_path - Finds command in PATH directories
+ * @command: The command to find
+ *
+ * Return: Full path to command or NULL if not found
+ */
+char *find_command_in_path(char *command)
+{
+	char *path, *path_copy, *dir, *full_path;
+	struct stat st;
+
+	/* If command contains '/', check it directly */
+	if (strchr(command, '/'))
+	{
+		if (stat(command, &st) == 0)
+			return (strdup(command));
+		return (NULL);
+	}
+
+	path = getenv("PATH");
+	if (!path)
+		return (NULL);
+
+	path_copy = strdup(path);
+	if (!path_copy)
+		return (NULL);
+
+	dir = strtok(path_copy, ":");
+	while (dir)
+	{
+		full_path = malloc(strlen(dir) + strlen(command) + 2);
+		if (!full_path)
+		{
+			free(path_copy);
+			return (NULL);
+		}
+
+		sprintf(full_path, "%s/%s", dir, command);
+		if (stat(full_path, &st) == 0)
+		{
+			free(path_copy);
+			return (full_path);
+		}
+
+		free(full_path);
+		dir = strtok(NULL, ":");
+	}
+
+	free(path_copy);
+	return (NULL);
+}
+
+/**
  * execute_command - Executes a command using execve
  * @input: The input string
  *
@@ -134,7 +186,7 @@ int execute_command(char *input)
 	pid_t pid;
 	int status, arg_count;
 	char **args;
-	char *trimmed_input;
+	char *trimmed_input, *command_path;
 
 	trimmed_input = trim_whitespace(input);
 
@@ -142,22 +194,36 @@ int execute_command(char *input)
 		return (1);
 
 	args = parse_input(trimmed_input, &arg_count);
-	if (!args)
+	if (!args || !args[0])
+	{
+		if (args) free(args);
 		return (0);
+	}
+
+	/* Find command in PATH */
+	command_path = find_command_in_path(args[0]);
+	if (!command_path)
+	{
+		printf("./shell: No such file or directory\n");
+		free(args);
+		return (0);
+	}
 
 	pid = fork();
 	if (pid == -1)
 	{
 		perror("Error");
+		free(command_path);
 		free(args);
 		return (0);
 	}
 
 	if (pid == 0)
 	{
-		if (execve(args[0], args, environ) == -1)
+		if (execve(command_path, args, environ) == -1)
 		{
-			printf("./shell: No such file or directory\n");
+			perror("./shell");
+			free(command_path);
 			free(args);
 			exit(EXIT_FAILURE);
 		}
@@ -167,6 +233,7 @@ int execute_command(char *input)
 		wait(&status);
 	}
 
+	free(command_path);
 	free(args);
 	return (1);
 }
