@@ -7,28 +7,28 @@
  */
 int main(void)
 {
-    char *input;
+	char *input;
 
-    while (1)
-    {
-        display_prompt();
-        input = read_input();
-        
-        if (input == NULL)
-        {
-            printf("\n");
-            break;
-        }
-        
-        if (strlen(input) > 0)
-        {
-            execute_command(input);
-        }
-        
-        free(input);
-    }
-    
-    return (0);
+	while (1)
+	{
+		display_prompt();
+		input = read_input();
+
+		if (input == NULL)
+		{
+			printf("\n");
+			break;
+		}
+
+		if (strlen(input) > 0)
+		{
+			execute_command(input);
+		}
+
+		free(input);
+	}
+
+	return (0);
 }
 
 /**
@@ -36,8 +36,8 @@ int main(void)
  */
 void display_prompt(void)
 {
-    printf("#cisfun$ ");
-    fflush(stdout);
+	printf("#cisfun$ ");
+	fflush(stdout);
 }
 
 /**
@@ -47,23 +47,23 @@ void display_prompt(void)
  */
 char *read_input(void)
 {
-    char *line = NULL;
-    size_t len = 0;
-    ssize_t nread;
+	char *line = NULL;
+	size_t len = 0;
+	ssize_t nread;
 
-    nread = getline(&line, &len, stdin);
-    
-    if (nread == -1)
-    {
-        free(line);
-        return (NULL);
-    }
-    
-    /* Remove newline character */
-    if (line[nread - 1] == '\n')
-        line[nread - 1] = '\0';
-    
-    return (line);
+	nread = getline(&line, &len, stdin);
+
+	if (nread == -1)
+	{
+		free(line);
+		return (NULL);
+	}
+
+	/* Remove newline character */
+	if (line[nread - 1] == '\n')
+		line[nread - 1] = '\0';
+
+	return (line);
 }
 
 /**
@@ -74,31 +74,34 @@ char *read_input(void)
  */
 int execute_command(char *command)
 {
-    pid_t pid;
-    int status;
-    char *args[] = {command, NULL};
+	pid_t pid;
+	int status;
+	char *args[2];
 
-    pid = fork();
-    if (pid == -1)
-    {
-        perror("Error");
-        return (0);
-    }
-    
-    if (pid == 0)
-    {
-        /* Child process */
-        if (execve(command, args, environ) == -1)
-        {
-            printf("./shell: No such file or directory\n");
-            exit(EXIT_FAILURE);
-        }
-    }
-    else
-    {
-        /* Parent process */
-        wait(&status);
-    }
-    
-    return (1);
+	args[0] = command;
+	args[1] = NULL;
+
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("Error");
+		return (0);
+	}
+
+	if (pid == 0)
+	{
+		/* Child process */
+		if (execve(command, args, environ) == -1)
+		{
+			printf("./shell: No such file or directory\n");
+			exit(EXIT_FAILURE);
+		}
+	}
+	else
+	{
+		/* Parent process */
+		wait(&status);
+	}
+
+	return (1);
 }
