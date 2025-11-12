@@ -46,7 +46,7 @@ int main(void)
  */
 void display_prompt(void)
 {
-	printf(":) ");
+	printf("$ ");
 	fflush(stdout);
 }
 
@@ -206,6 +206,20 @@ char *find_command_in_path(char *command)
 }
 
 /**
+ * print_environment - Prints the current environment
+ */
+void print_environment(void)
+{
+	int i = 0;
+
+	while (environ[i])
+	{
+		printf("%s\n", environ[i]);
+		i++;
+	}
+}
+
+/**
  * check_builtin - Checks if command is a built-in
  * @args: Array of arguments
  * @exit_shell: Pointer to exit flag
@@ -217,6 +231,11 @@ int check_builtin(char **args, int *exit_shell)
 	if (strcmp(args[0], "exit") == 0)
 	{
 		*exit_shell = 1;
+		return (1);
+	}
+	else if (strcmp(args[0], "env") == 0)
+	{
+		print_environment();
 		return (1);
 	}
 	return (0);
@@ -253,7 +272,7 @@ int execute_command(char *input, int *exit_shell)
 	if (check_builtin(args, exit_shell))
 	{
 		free(args);
-		return (last_status);
+		return (0);
 	}
 
 	/* Find command in PATH */
