@@ -9,6 +9,7 @@ int main(void)
 {
 	char *input;
 	int interactive = isatty(STDIN_FILENO);
+	int status = 0;
 
 	while (1)
 	{
@@ -26,13 +27,13 @@ int main(void)
 
 		if (strlen(input) > 0)
 		{
-			execute_command(input);
+			status = execute_command(input);
 		}
 
 		free(input);
 	}
 
-	return (0);
+	return (status);
 }
 
 /**
@@ -203,7 +204,7 @@ char *find_command_in_path(char *command)
  * execute_command - Executes a command using execve
  * @input: The input string
  *
- * Return: 1 on success, 0 on failure
+ * Return: 127 if command not found, 0 on success, 1 on error
  */
 int execute_command(char *input)
 {
@@ -215,7 +216,7 @@ int execute_command(char *input)
 	trimmed_input = trim_whitespace(input);
 
 	if (strlen(trimmed_input) == 0)
-		return (1);
+		return (0);
 
 	args = parse_input(trimmed_input, &arg_count);
 	if (!args || !args[0])
@@ -230,7 +231,7 @@ int execute_command(char *input)
 	{
 		fprintf(stderr, "./hsh: 1: %s: not found\n", args[0]);
 		free(args);
-		return (0);
+		return (127);
 	}
 
 	pid = fork();
@@ -239,7 +240,7 @@ int execute_command(char *input)
 		perror("Error");
 		free(command_path);
 		free(args);
-		return (0);
+		return (1);
 	}
 
 	if (pid == 0)
@@ -255,9 +256,13 @@ int execute_command(char *input)
 	else
 	{
 		wait(&status);
+		if (WIFEXITED(status))
+			status = WEXITSTATUS(status);
+		else
+			status = 0;
 	}
 
 	free(command_path);
 	free(args);
-	return (1);
+	return (status);
 }
