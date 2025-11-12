@@ -209,11 +209,10 @@ char *find_command_in_path(char *command)
  * check_builtin - Checks if command is a built-in
  * @args: Array of arguments
  * @exit_shell: Pointer to exit flag
- * @last_status: Last exit status
  *
  * Return: 1 if built-in executed, 0 otherwise
  */
-int check_builtin(char **args, int *exit_shell, int last_status)
+int check_builtin(char **args, int *exit_shell)
 {
 	if (strcmp(args[0], "exit") == 0)
 	{
@@ -251,7 +250,7 @@ int execute_command(char *input, int *exit_shell)
 	}
 
 	/* Check for built-in commands */
-	if (check_builtin(args, exit_shell, last_status))
+	if (check_builtin(args, exit_shell))
 	{
 		free(args);
 		return (last_status);
