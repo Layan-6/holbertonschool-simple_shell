@@ -124,6 +124,30 @@ char **parse_input(char *input, int *arg_count)
 }
 
 /**
+ * _getenv - Gets environment variable value
+ * @name: Name of environment variable
+ *
+ * Return: Value of variable or NULL if not found
+ */
+char *_getenv(const char *name)
+{
+	int i = 0;
+	size_t len = strlen(name);
+
+	if (!name || !environ)
+		return (NULL);
+
+	while (environ[i])
+	{
+		if (strncmp(environ[i], name, len) == 0 && environ[i][len] == '=')
+			return (&environ[i][len + 1]);
+		i++;
+	}
+
+	return (NULL);
+}
+
+/**
  * find_command_in_path - Finds command in PATH directories
  * @command: The command to find
  *
@@ -142,7 +166,7 @@ char *find_command_in_path(char *command)
 		return (NULL);
 	}
 
-	path = getenv("PATH");
+	path = _getenv("PATH");
 	if (!path)
 		return (NULL);
 
