@@ -167,7 +167,7 @@ char *find_command_in_path(char *command)
 	}
 
 	path = _getenv("PATH");
-	if (!path)
+	if (!path || strlen(path) == 0)
 		return (NULL);
 
 	path_copy = strdup(path);
@@ -228,7 +228,7 @@ int execute_command(char *input)
 	command_path = find_command_in_path(args[0]);
 	if (!command_path)
 	{
-		printf("./shell: No such file or directory\n");
+		fprintf(stderr, "./hsh: 1: %s: not found\n", args[0]);
 		free(args);
 		return (0);
 	}
