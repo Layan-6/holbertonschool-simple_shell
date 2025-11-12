@@ -11,6 +11,7 @@ int main(void)
 	int interactive = isatty(STDIN_FILENO);
 	int status = 0;
 	int exit_shell = 0;
+	int last_status = 0;
 
 	while (!exit_shell)
 	{
@@ -28,13 +29,13 @@ int main(void)
 
 		if (strlen(input) > 0)
 		{
-			status = execute_command(input, &exit_shell);
+			last_status = execute_command(input, &exit_shell);
 		}
 
 		free(input);
 	}
 
-	return (status);
+	return (last_status);
 }
 
 /**
@@ -223,7 +224,7 @@ int check_builtin(char **args, int *exit_shell)
  * @input: The input string
  * @exit_shell: Pointer to exit flag
  *
- * Return: 127 if command not found, 0 on success, 1 on error
+ * Return: Exit status of the command
  */
 int execute_command(char *input, int *exit_shell)
 {
