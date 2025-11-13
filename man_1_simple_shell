@@ -1,0 +1,89 @@
+.TH SIMPLE_SHELL 1 "November 2025" "Version 1.1" "User Commands"
+.SH NAME
+simple_shell \- A simple Unix command-line interpreter.
+.SH SYNOPSIS
+.B hsh
+.SH DESCRIPTION
+.B simple_shell
+is a simple UNIX command line interpreter that replicates basic functionality of the sh shell.
+.PP
+The shell displays a prompt and waits for the user to type a command. A command line always ends with a new line. The prompt is displayed again each time a command has been executed.
+.SH OPTIONS
+The shell does not take any options.
+.SH COMMANDS
+The shell supports the following types of commands:
+.TP
+.B External Commands
+Executes programs found in the PATH environment variable (e.g., /bin/ls, ls, pwd)
+.TP
+.B Built-in Commands
+.RS
+.TP
+.B exit
+Exits the shell
+.TP
+.B env
+Prints the current environment variables
+.RE
+.SH USAGE
+To use the shell in interactive mode:
+.PP
+.B $ ./hsh
+.PP
+.B $ ls
+.PP
+.B file1 file2 file3
+.PP
+.B $ exit
+.PP
+To use the shell in non-interactive mode:
+.PP
+.B echo "ls" | ./hsh
+.SH ENVIRONMENT
+The shell inherits the environment from the parent process and uses the PATH variable to locate executable programs.
+.SH EXIT STATUS
+The shell returns:
+.TP
+.B 0
+Success
+.TP
+.B 1
+Error
+.TP
+.B 2
+Incorrect usage
+.TP
+.B 127
+Command not found
+.SH EXAMPLES
+.PP
+Execute ls command:
+.PP
+.B $ ./hsh
+.PP
+.B $ /bin/ls
+.PP
+.B file1 file2 file3
+.PP
+Print environment:
+.PP
+.B $ env
+.PP
+.B USER=username
+.PP
+.B HOME=/home/username
+.PP
+Exit shell:
+.PP
+.B $ exit
+.SH AUTHORS
+.B Layan Aldossari
+<layansaleem@gmail.com>
+.TP
+.B Afnan Alkhaldi
+<afnanrashid@gmail.com>
+.SH SEE ALSO
+.BR sh (1),
+.BR bash (1)
+.SH BUGS
+No known bugs.
